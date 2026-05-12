@@ -1,6 +1,7 @@
 use std::path::{Path, PathBuf};
 use crate::model::Snapshot;
 
+pub mod power_supply;
 pub mod typec;
 
 pub struct SysfsRoot {
@@ -13,9 +14,19 @@ impl SysfsRoot {
     pub fn class(&self, name: &str) -> PathBuf { self.root.join("class").join(name) }
 
     pub fn snapshot(&self) -> anyhow::Result<Snapshot> {
-        let ports = typec::enumerate(self)?;
-        Ok(Snapshot { ports })
+        let mut ports = typec::enumerate(self)?;
+        let live = power_supply::find_for_sinking_port(self);
+        for p in &mut ports {
+            if p.power_role.as_deref() == Some("sink") {
+                p.live = live.clone();
+            }
+        }
+        Ok(ports_into_snapshot(ports))
     }
+}
+
+fn ports_into_snapshot(ports: Vec<crate::model::Port>) -> Snapshot {
+    Snapshot { ports }
 }
 
 pub(crate) fn read_trim(path: &Path) -> Option<String> {

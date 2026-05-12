@@ -35,7 +35,7 @@ pub struct Cable {
     pub cable_vdo: Option<CableVdo>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct LiveCharge {
     pub supply: String,              // power_supply name
     pub online: bool,

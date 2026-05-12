@@ -38,3 +38,12 @@ fn port_with_partner_and_cable() {
     assert!(matches!(cv.speed, usb_mess::vdo::CableSpeed::Usb32Gen2));
     assert!(matches!(cv.max_current, usb_mess::vdo::CableCurrent::A3));
 }
+
+#[test]
+fn port_sinking_reports_live_charge() {
+    let snap = fixture("port_charging").snapshot().unwrap();
+    let live = snap.ports[0].live.as_ref().expect("live present when sinking");
+    assert!(live.online);
+    assert_eq!(live.current_now_ua, Some(2_890_000));
+    assert_eq!(live.voltage_now_uv, Some(19_500_000));
+}
