@@ -1,6 +1,6 @@
 [package]
 name = "usb-mess"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "Explain your USB-C cables and ports on Linux"
 license = "MIT"

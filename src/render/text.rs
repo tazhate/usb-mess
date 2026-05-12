@@ -106,4 +106,17 @@ fn render_live(out: &mut String, l: &LiveCharge) {
         i.map(|x| format!("{x:.3} A"))
             .unwrap_or_else(|| "— A".into())
     );
+
+    let v_max = l.voltage_max_uv.map(|x| x as f64 / 1_000_000.0);
+    let i_max = l.current_max_ua.map(|x| x as f64 / 1_000_000.0);
+    if let (Some(vm), Some(im)) = (v_max, i_max) {
+        let w_max = vm * im;
+        let drawing = v.zip(i).map(|(a, b)| a * b).unwrap_or(0.0);
+        if w_max > drawing + 1.0 {
+            let _ = writeln!(
+                out,
+                "  available:  up to {w_max:.1} W  ({vm:.2} V, {im:.3} A)"
+            );
+        }
+    }
 }
