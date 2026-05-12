@@ -12,7 +12,11 @@ pub fn enumerate(root: &SysfsRoot) -> anyhow::Result<Vec<Port>> {
         .filter_map(Result::ok)
         .filter_map(|e| {
             let name = e.file_name().to_string_lossy().into_owned();
-            if is_port_name(&name) { Some((name, e.path())) } else { None }
+            if is_port_name(&name) {
+                Some((name, e.path()))
+            } else {
+                None
+            }
         })
         .map(|(name, path)| {
             let typec_dir = path.parent().unwrap().to_path_buf();
@@ -59,7 +63,9 @@ fn read_id_header(identity_dir: &Path) -> Option<crate::vdo::IdHeader> {
 }
 
 fn read_partner(path: &Path) -> Option<Partner> {
-    if !path.exists() { return None; }
+    if !path.exists() {
+        return None;
+    }
     Some(Partner {
         supports_usb_pd: read_yes_no(&path.join("supports_usb_power_delivery")),
         number_of_alternate_modes: read_u32_dec(&path.join("number_of_alternate_modes")),
@@ -68,7 +74,9 @@ fn read_partner(path: &Path) -> Option<Partner> {
 }
 
 fn read_cable(path: &Path) -> Option<Cable> {
-    if !path.exists() { return None; }
+    if !path.exists() {
+        return None;
+    }
     let identity = path.join("identity");
     let cable_vdo = read_trim(&identity.join("product_type_vdo1"))
         .and_then(|s| parse_vdo_hex(&s).ok())

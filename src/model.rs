@@ -1,5 +1,5 @@
-use serde::Serialize;
 use crate::vdo::{CableVdo, IdHeader};
+use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 pub struct Snapshot {
@@ -8,7 +8,7 @@ pub struct Snapshot {
 
 #[derive(Debug, Serialize)]
 pub struct Port {
-    pub name: String,                // "port0"
+    pub name: String, // "port0"
     pub data_role: Option<String>,
     pub power_role: Option<String>,
     pub power_operation_mode: Option<String>,
@@ -29,7 +29,7 @@ pub struct Partner {
 
 #[derive(Debug, Serialize)]
 pub struct Cable {
-    pub kind: Option<String>,        // "active" / "passive"
+    pub kind: Option<String>, // "active" / "passive"
     pub plug_type: Option<String>,
     pub identity_id_header: Option<IdHeader>,
     pub cable_vdo: Option<CableVdo>,
@@ -37,7 +37,7 @@ pub struct Cable {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct LiveCharge {
-    pub supply: String,              // power_supply name
+    pub supply: String, // power_supply name
     pub online: bool,
     pub voltage_now_uv: Option<i64>,
     pub current_now_ua: Option<i64>,

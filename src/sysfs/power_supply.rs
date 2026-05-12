@@ -7,8 +7,10 @@ pub fn find_for_sinking_port(root: &SysfsRoot) -> Option<LiveCharge> {
     let entries = std::fs::read_dir(&dir).ok()?;
     for e in entries.flatten() {
         let p = e.path();
-        if matches!(read_trim(&p.join("type")).as_deref(), Some("USB_PD" | "USB_PD_DRP"))
-            && read_int(&p.join("online")) == Some(1)
+        if matches!(
+            read_trim(&p.join("type")).as_deref(),
+            Some("USB_PD" | "USB_PD_DRP")
+        ) && read_int(&p.join("online")) == Some(1)
         {
             return Some(LiveCharge {
                 supply: e.file_name().to_string_lossy().into_owned(),

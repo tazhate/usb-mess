@@ -58,14 +58,20 @@ pub fn decode_cable_vdo(raw: u32) -> anyhow::Result<CableVdo> {
         2 => CableCurrent::A5,
         other => CableCurrent::Unknown(other as u8),
     };
-    Ok(CableVdo { raw, speed, max_current })
+    Ok(CableVdo {
+        raw,
+        speed,
+        max_current,
+    })
 }
 
 pub fn parse_vdo_hex(s: &str) -> anyhow::Result<u32> {
     let s = s.trim();
-    let stripped = s.strip_prefix("0x").or_else(|| s.strip_prefix("0X")).unwrap_or(s);
-    u32::from_str_radix(stripped, 16)
-        .map_err(|e| anyhow::anyhow!("invalid VDO hex {s:?}: {e}"))
+    let stripped = s
+        .strip_prefix("0x")
+        .or_else(|| s.strip_prefix("0X"))
+        .unwrap_or(s);
+    u32::from_str_radix(stripped, 16).map_err(|e| anyhow::anyhow!("invalid VDO hex {s:?}: {e}"))
 }
 
 pub fn decode_id_header(raw: u32) -> anyhow::Result<IdHeader> {

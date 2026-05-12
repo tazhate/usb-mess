@@ -1,5 +1,5 @@
-use std::path::{Path, PathBuf};
 use crate::model::Snapshot;
+use std::path::{Path, PathBuf};
 
 pub mod power_supply;
 pub mod typec;
@@ -9,9 +9,15 @@ pub struct SysfsRoot {
 }
 
 impl SysfsRoot {
-    pub fn new(root: impl Into<PathBuf>) -> Self { Self { root: root.into() } }
-    pub fn system() -> Self { Self::new("/sys") }
-    pub fn class(&self, name: &str) -> PathBuf { self.root.join("class").join(name) }
+    pub fn new(root: impl Into<PathBuf>) -> Self {
+        Self { root: root.into() }
+    }
+    pub fn system() -> Self {
+        Self::new("/sys")
+    }
+    pub fn class(&self, name: &str) -> PathBuf {
+        self.root.join("class").join(name)
+    }
 
     pub fn snapshot(&self) -> anyhow::Result<Snapshot> {
         let mut ports = typec::enumerate(self)?;
@@ -30,5 +36,7 @@ fn ports_into_snapshot(ports: Vec<crate::model::Port>) -> Snapshot {
 }
 
 pub(crate) fn read_trim(path: &Path) -> Option<String> {
-    std::fs::read_to_string(path).ok().map(|s| s.trim().to_string())
+    std::fs::read_to_string(path)
+        .ok()
+        .map(|s| s.trim().to_string())
 }

@@ -11,7 +11,9 @@ fn main() -> anyhow::Result<()> {
     };
 
     if !root_typec_exists(&root) {
-        eprintln!("kernel typec class not available; ensure CONFIG_TYPEC + UCSI/tcpm driver is loaded");
+        eprintln!(
+            "kernel typec class not available; ensure CONFIG_TYPEC + UCSI/tcpm driver is loaded"
+        );
         std::process::exit(2);
     }
 
