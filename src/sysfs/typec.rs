@@ -1,4 +1,4 @@
-use super::{read_trim, SysfsRoot};
+use super::{parse_active, read_trim, SysfsRoot};
 use crate::model::{Cable, Partner, Port};
 use crate::vdo::{decode_cable_vdo, decode_id_header, parse_vdo_hex};
 use std::path::Path;
@@ -23,9 +23,15 @@ pub fn enumerate(root: &SysfsRoot) -> anyhow::Result<Vec<Port>> {
             let partner_path = typec_dir.join(format!("{name}-partner"));
             let cable_path = typec_dir.join(format!("{name}-cable"));
             Port {
-                data_role: read_trim(&path.join("data_role")),
-                power_role: read_trim(&path.join("power_role")),
-                power_operation_mode: read_trim(&path.join("power_operation_mode")),
+                data_role: read_trim(&path.join("data_role"))
+                    .as_deref()
+                    .map(parse_active),
+                power_role: read_trim(&path.join("power_role"))
+                    .as_deref()
+                    .map(parse_active),
+                power_operation_mode: read_trim(&path.join("power_operation_mode"))
+                    .as_deref()
+                    .map(parse_active),
                 usb_typec_revision: read_trim(&path.join("usb_typec_revision")),
                 usb_pd_revision: read_trim(&path.join("usb_power_delivery_revision")),
                 usb_capability: read_trim(&path.join("usb_capability")),

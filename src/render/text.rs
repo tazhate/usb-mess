@@ -17,6 +17,10 @@ pub fn to_text(snap: &Snapshot, _color: bool) -> String {
 
 fn render_port(out: &mut String, p: &Port) {
     let _ = writeln!(out, "[{}]", p.name);
+    if p.partner.is_none() {
+        let _ = writeln!(out, "  (nothing connected)");
+        return;
+    }
     let _ = writeln!(
         out,
         "  role:       {} / {}",
@@ -26,11 +30,8 @@ fn render_port(out: &mut String, p: &Port) {
     if let Some(rev) = &p.usb_pd_revision {
         let _ = writeln!(out, "  pd rev:     {rev}");
     }
-    match &p.partner {
-        None => {
-            let _ = writeln!(out, "  partner:    (none)");
-        }
-        Some(partner) => render_partner(out, partner),
+    if let Some(partner) = &p.partner {
+        render_partner(out, partner);
     }
     match &p.cable {
         None => {

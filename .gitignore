@@ -2,3 +2,4 @@
 Cargo.lock.bak
 *.swp
 docs/superpowers/
+/usb-mess

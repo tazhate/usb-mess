@@ -40,3 +40,39 @@ pub(crate) fn read_trim(path: &Path) -> Option<String> {
         .ok()
         .map(|s| s.trim().to_string())
 }
+
+/// Extract the bracketed (currently active) value from a sysfs string like
+/// `source [sink]` -> `sink`. Strings without brackets are returned trimmed
+/// (single-value fields).
+pub(crate) fn parse_active(s: &str) -> String {
+    if let (Some(start), Some(end)) = (s.find('['), s.find(']')) {
+        if end > start + 1 {
+            return s[start + 1..end].trim().to_string();
+        }
+    }
+    s.trim().to_string()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::parse_active;
+
+    #[test]
+    fn parse_active_picks_bracketed() {
+        assert_eq!(parse_active("source [sink]"), "sink");
+        assert_eq!(parse_active("[source] sink"), "source");
+        assert_eq!(parse_active("host [device]"), "device");
+    }
+
+    #[test]
+    fn parse_active_passes_through_plain() {
+        assert_eq!(parse_active("sink"), "sink");
+        assert_eq!(parse_active("  host  "), "host");
+    }
+
+    #[test]
+    fn parse_active_handles_multi_with_brackets() {
+        // kernel usb_type: "C [PD] PD_PPS" → active is "PD"
+        assert_eq!(parse_active("C [PD] PD_PPS"), "PD");
+    }
+}
