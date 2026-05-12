@@ -20,6 +20,47 @@ pub struct IdHeader {
     pub usb_device: bool,
 }
 
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub enum CableCurrent {
+    Reserved,
+    A3,
+    A5,
+    Unknown(u8),
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub enum CableSpeed {
+    Usb20,
+    Usb32Gen1,
+    Usb32Gen2,
+    Usb4,
+    Unknown(u8),
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct CableVdo {
+    pub raw: u32,
+    pub speed: CableSpeed,
+    pub max_current: CableCurrent,
+}
+
+pub fn decode_cable_vdo(raw: u32) -> anyhow::Result<CableVdo> {
+    let speed = match raw & 0b111 {
+        0 => CableSpeed::Usb20,
+        1 => CableSpeed::Usb32Gen1,
+        3 => CableSpeed::Usb32Gen2,
+        4 => CableSpeed::Usb4,
+        other => CableSpeed::Unknown(other as u8),
+    };
+    let max_current = match (raw >> 5) & 0b11 {
+        0 => CableCurrent::Reserved,
+        1 => CableCurrent::A3,
+        2 => CableCurrent::A5,
+        other => CableCurrent::Unknown(other as u8),
+    };
+    Ok(CableVdo { raw, speed, max_current })
+}
+
 pub fn decode_id_header(raw: u32) -> anyhow::Result<IdHeader> {
     let usb_vid = (raw & 0xFFFF) as u16;
     let product_type_cable_bits = ((raw >> 27) & 0b111) as u8;
