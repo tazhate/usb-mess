@@ -1,4 +1,4 @@
-use usb_mess::vdo::{decode_cable_vdo, decode_id_header, CableCurrent, CableSpeed, ProductType};
+use usb_mess::vdo::{decode_cable_vdo, decode_id_header, parse_vdo_hex, CableCurrent, CableSpeed, ProductType};
 
 #[test]
 fn id_header_apple_passive_cable() {
@@ -32,4 +32,16 @@ fn cable_vdo_passive_usb4_5a() {
     let v = decode_cable_vdo(raw).unwrap();
     assert_eq!(v.speed, CableSpeed::Usb4);
     assert_eq!(v.max_current, CableCurrent::A5);
+}
+
+#[test]
+fn parse_vdo_hex_accepts_0x_prefix_and_plain() {
+    assert_eq!(parse_vdo_hex("0x1c0005ac").unwrap(), 0x1c0005ac);
+    assert_eq!(parse_vdo_hex("1c0005ac").unwrap(), 0x1c0005ac);
+    assert_eq!(parse_vdo_hex(" 0X1C0005AC \n").unwrap(), 0x1c0005ac);
+}
+
+#[test]
+fn parse_vdo_hex_rejects_garbage() {
+    assert!(parse_vdo_hex("nope").is_err());
 }
