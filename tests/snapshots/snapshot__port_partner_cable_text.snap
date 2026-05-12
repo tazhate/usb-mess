@@ -1,0 +1,10 @@
+---
+source: tests/snapshot.rs
+expression: s
+---
+[port0]
+  role:       source / host
+  partner:    PD=yes, altmodes=1
+              VID=0x05ac
+  cable:      passive, USB 3.2 Gen 2 (10 Gbps), 3 A (≤60 W @ 20 V)
+              cable VID=0x05ac

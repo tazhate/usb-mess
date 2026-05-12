@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 use usb_mess::render::json::to_json;
+use usb_mess::render::text::to_text;
 use usb_mess::sysfs::SysfsRoot;
 
 fn fixture(name: &str) -> SysfsRoot {
@@ -54,4 +55,18 @@ fn port_sinking_reports_live_charge() {
     assert!(live.online);
     assert_eq!(live.current_now_ua, Some(2_890_000));
     assert_eq!(live.voltage_now_uv, Some(19_500_000));
+}
+
+#[test]
+fn text_output_port_partner_cable() {
+    let snap = fixture("port_partner_cable").snapshot().unwrap();
+    let s = to_text(&snap, false);          // no color
+    insta::assert_snapshot!("port_partner_cable_text", s);
+}
+
+#[test]
+fn text_output_empty_says_no_ports() {
+    let snap = fixture("empty").snapshot().unwrap();
+    let s = to_text(&snap, false);
+    assert!(s.contains("No USB-C ports"));
 }
