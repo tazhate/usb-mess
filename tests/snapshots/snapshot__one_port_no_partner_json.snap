@@ -1,0 +1,20 @@
+---
+source: tests/snapshot.rs
+expression: s
+---
+{
+  "ports": [
+    {
+      "name": "port0",
+      "data_role": "host",
+      "power_role": "source",
+      "power_operation_mode": null,
+      "usb_typec_revision": null,
+      "usb_pd_revision": null,
+      "usb_capability": null,
+      "partner": null,
+      "cable": null,
+      "live": null
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+use usb_mess::render::json::to_json;
 use usb_mess::sysfs::SysfsRoot;
 
 fn fixture(name: &str) -> SysfsRoot {
@@ -37,6 +38,13 @@ fn port_with_partner_and_cable() {
     let cv = cable.cable_vdo.as_ref().unwrap();
     assert!(matches!(cv.speed, usb_mess::vdo::CableSpeed::Usb32Gen2));
     assert!(matches!(cv.max_current, usb_mess::vdo::CableCurrent::A3));
+}
+
+#[test]
+fn json_output_for_one_port() {
+    let snap = fixture("one_port_no_partner").snapshot().unwrap();
+    let s = to_json(&snap).unwrap();
+    insta::assert_snapshot!("one_port_no_partner_json", s);
 }
 
 #[test]
